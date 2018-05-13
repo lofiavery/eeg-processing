@@ -100,3 +100,7 @@ raw.info = info_custom
 # several colorful graphs, you now have a matrix with rows and columns containing spatial data (electrodes) over time
 # (sampling points) that can be translated into another temporal dimension (miliseconds) for plotting. These spatial data
 # are scattered around a head shape that was specified with coordinates from the montage you have provided.
+
+# You can have a look at your raw data and browse through it. However, for browsing you will probably have to switch to
+# the terminal and use mne_browse_raw. This will open a window where you can just scroll through the raw data.
+raw.plot(block=True)
