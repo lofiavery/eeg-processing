@@ -87,10 +87,16 @@ data_path = './Sub1d.bdf'
 
 # Read the raw EEG data. Note the naming convention you use for your triggers set in the EEG. The argument 'strip_to_integer'
 # will remove all symbols that are no integers. Thus, it will convert 'S17' to '17'. The object 'raw' is an instance of raw
-# EEG data. 
+# EEG data.
 raw = mne.io.read_raw_edf(data_path, montage=montage, event_id=None, 
                           event_id_func='strip_to_integer', preload=True, 
                           verbose=None, uint16_codec=None) 
 
 # Replace the mne info structure with the customized one that has the correct labels, channel types and positions.
 raw.info = info_custom
+
+# If you just type in raw.info, your IPython console will give you all the header information of your file.
+# Imagine your EEG data as it was during the recording, a collection of time points by channel in microvolt. Instead of
+# several colorful graphs, you now have a matrix with rows and columns containing spatial data (electrodes) over time
+# (sampling points) that can be translated into another temporal dimension (miliseconds) for plotting. These spatial data
+# are scattered around a head shape that was specified with coordinates from the montage you have provided.
