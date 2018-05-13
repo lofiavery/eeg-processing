@@ -86,10 +86,11 @@ info_custom['description'] = 'My experiment with 64 EEG channels plus two EOG ch
 data_path = './Sub1d.bdf'
 
 # Read the raw EEG data. Note the naming convention you use for your triggers set in the EEG. The argument 'strip_to_integer'
-# will remove all symbols that are no integers. Thus, it will convert 'S17' to '17'.
-raw = mne.io.read_raw_eeglab(data_path, montage=montage, event_id=None, 
-                             event_id_func='strip_to_integer', preload=True, 
-                             verbose=None, uint16_codec=None) 
+# will remove all symbols that are no integers. Thus, it will convert 'S17' to '17'. The object 'raw' is an instance of raw
+# EEG data. 
+raw = mne.io.read_raw_edf(data_path, montage=montage, event_id=None, 
+                          event_id_func='strip_to_integer', preload=True, 
+                          verbose=None, uint16_codec=None) 
 
 # Replace the mne info structure with the customized one that has the correct labels, channel types and positions.
 raw.info = info_custom
