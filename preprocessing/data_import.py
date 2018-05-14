@@ -85,17 +85,26 @@ info_custom['description'] = 'My experiment with 64 EEG channels plus two EOG ch
 # Write the path to your file.
 data_path = './Sub1d.bdf'
 
-# Read the raw EEG data. Note the naming convention you use for your triggers set in the EEG. The argument 'strip_to_integer'
-# will remove all symbols that are no integers. Thus, it will convert 'S17' to '17'. The object 'raw' is an instance of raw
-# EEG data.
-raw = mne.io.read_raw_edf(data_path, montage=montage, event_id=None, 
-                          event_id_func='strip_to_integer', preload=True, 
-                          verbose=None, uint16_codec=None) 
+# Read the raw EEG data. Note the naming convention you use for your triggers set in the EEG. The object 'raw' is an 
+# instance of raw EEG data. The argument 'preload' enables us to directly load the file into memory and eases quick data
+# manipulation. For Biosemi data files, stimulus codes are stored in an additional empty channel that only contains bits 
+# 1-16. We need to know the stimulus channel and specify it while importing data, look for events with 'mne.find_events'
+# when data is already imported or provide event information by separately importing a customized event file. The lists of
+# 'eog' and 'exclude' is a list of external channels I wrote in the config file we use in the lab. You will notice a lot of
+# unnecessary empty channels that were meant for other experiments also utilizing this config file. Just ignore all but the
+# first two EXG channels (EOG channels).
+raw = mne.io.read_raw_edf(data_path, montage=montage, preload=True, stim_channel=,
+                          eog=[u'EXG1', u'EXG2'] exclude=[u'EXG3', u'EXG4', u'EXG5', u'EXG6', u'EXG7', u'EXG8', u'GSR1',
+                                                           u'GSR2', u'Erg1', u'Erg2', u'Resp', u'Plet', u'Temp']) 
 
 # Replace the mne info structure with the customized one that has the correct labels, channel types and positions.
 raw.info = info_custom
 
-# If you just type in raw.info, your IPython console will give you all the header information of your file.
+# If you just type in raw.info, your IPython console will give you all the header information of your file. For instance,
+# if you type 'raw.ch_names', the console returns the list of channel labels you specified earlier. Similarly you can grab
+# hold of any information that is stored in raw.
+raw.ch_names
+
 # Imagine your EEG data as it was during the recording, a collection of time points by channel in microvolt. Instead of
 # several colorful graphs, you now have a matrix with rows and columns containing spatial data (electrodes) over time
 # (sampling points) that can be translated into another temporal dimension (miliseconds) for plotting. These spatial data
