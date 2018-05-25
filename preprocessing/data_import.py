@@ -59,7 +59,7 @@ montage = mne.channels.read_montage(kind='biosemi64')
 channel_names = ['Fp1','AF7','AF3','F1','F3','F5','F7','FT7','FC5','FC3','FC1','C1','C3','C5','T7','TP7','CP5','CP3','CP1',
                  'P1','P3','P5','P7','P9','PO7','PO3','O1','Iz','Oz','POz','Pz','CPz','Fpz','Fp2','AF8','AF4','AFz','Fz',
                  'F2','F4','F6','F8','FT8','FC6','FC4','FC2','FCz','Cz','C2','C4','C6','T8','TP8','CP6','CP4','CP2','P2','P4',
-                 'P6','P8','P10','PO8','PO4','O2','EOG_blink','EOG_sacc']
+                 'P6','P8','P10','PO8','PO4','O2','EOG_blink','EOG_sac','Stim']
                  
 # Write a list of channel types (e.g., eeg, eog, ecg)
 channel_types = ['eeg',	'eeg',	'eeg',	'eeg',	'eeg',	'eeg',	'eeg',	'eeg',	
@@ -70,7 +70,7 @@ channel_types = ['eeg',	'eeg',	'eeg',	'eeg',	'eeg',	'eeg',	'eeg',	'eeg',
                  'eeg',	'eeg',	'eeg',	'eeg',	'eeg',	'eeg',	'eeg',	'eeg',	
                  'eeg',	'eeg',	'eeg',	'eeg',	'eeg',	'eeg',	'eeg',	'eeg',	
                  'eeg',	'eeg',	'eeg',	'eeg',	'eeg',	'eeg',	'eeg',	'eeg',
-                 'eog', 'eog']
+                 'eog',	'eog', 'stim']
                  
 # Note the samlping rate of your recording (in your case most likely 1024 Hz)
 s_freq = 1024
@@ -89,13 +89,12 @@ data_path = './Sub1d.bdf'
 # instance of raw EEG data. The argument 'preload' enables us to directly load the file into memory and eases quick data
 # manipulation. For Biosemi data files, stimulus codes are stored in an additional empty channel that only contains bits 
 # 1-16. We need to know the stimulus channel and specify it while importing data, look for events with 'mne.find_events'
-# when data is already imported or provide event information by separately importing a customized event file. The lists of
+# when data is imported or provide event information by separately importing a customized event file. The lists of
 # 'eog' and 'exclude' is a list of external channels I wrote in the config file we use in the lab. You will notice a lot of
 # unnecessary empty channels that were meant for other experiments also utilizing this config file. Just ignore all but the
 # first two EXG channels (EOG channels).
-raw = mne.io.read_raw_edf(data_path, montage=montage, preload=True, stim_channel=,
-                          eog=[u'EXG1', u'EXG2'] exclude=[u'EXG3', u'EXG4', u'EXG5', u'EXG6', u'EXG7', u'EXG8', u'GSR1',
-                                                           u'GSR2', u'Erg1', u'Erg2', u'Resp', u'Plet', u'Temp']) 
+raw = mne.io.read_raw_edf(data_path, montage=montage, preload=True, stim_channel=-1,
+                          eog=[u'EXG1', u'EXG2'] exclude=[u'EXG3', u'EXG4', u'EXG5', u'EXG6', u'EXG7', u'EXG8']) 
 
 # Replace the mne info structure with the customized one that has the correct labels, channel types and positions.
 raw.info = info_custom
@@ -105,9 +104,24 @@ raw.info = info_custom
 # hold of any information that is stored in raw.
 raw.ch_names
 
+# Now look for events with 'mne.find_events' in your raw file's stimulus channel with the events' onsets, only including
+# events that have a duration of at least .002 seconds.
+events = mne.find_events(raw, stim_channel='Stim', output='onset', 
+                         min_duration=0.002)
+
+# For initial plotting, do some very basic data cleaning (filter, new reference) with a band-pass filter (high-pass=0.5 Hz
+# and low-pass=30Hz). As a new reference, I recommend an average reference for the 64-channel system from the lab in the
+# Department of Psychology and a mastoid reference (TP9 and TP10) for the 32-channel system from the lab in the clinic.
+raw.filter(0.5, 30., n_jobs=1, fir_design='firwin') 
+
+raw.set_eeg_reference(ref_channels=['TP9','TP10']) 
+
+# ... or
+raw.set_eeg_reference(ref_channels='average') 
+
 # Imagine your EEG data as it was during the recording, a collection of time points by channel in microvolt. Instead of
 # several colorful graphs, you now have a matrix with rows and columns containing spatial data (electrodes) over time
-# (sampling points) that can be translated into another temporal dimension (miliseconds) for plotting. These spatial data
+# (sampling points) that can be translated into another temporal scale (miliseconds) for plotting. These spatial data
 # are scattered around a head shape that was specified with coordinates from the montage you have provided.
 
 # You can have a look at your raw data and browse through it. However, for browsing you will probably have to switch to
