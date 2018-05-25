@@ -82,8 +82,12 @@ info_custom['description'] = 'My experiment with 64 EEG channels plus two EOG ch
 
 
 # After having written your customized info file, you can finally read in your data. Let's start with a single file.
-# Write the path to your file.
-data_path = './Sub1d.bdf'
+# Write the path to your file. In case of .eeg files, make sure you have stored the identically named .vmrk (markers) and 
+# .vhdr (headers) files under the same path, since the .eeg file contains the raw values and references the other two.
+data_path = './Sub1.eeg'
+
+# ... or look for the bdf file
+data_path = './Sub1.bdf'
 
 # Read the raw EEG data. Note the naming convention you use for your triggers set in the EEG. The object 'raw' is an 
 # instance of raw EEG data. The argument 'preload' enables us to directly load the file into memory and eases quick data
