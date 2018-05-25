@@ -8,7 +8,7 @@ Created on Sun May 13 08:51:15 2017
 # Biosemi or BrainProducts EEG-systems. So odds are that your data are saved in the .bdf or .eeg format. 
 # The following script will help you read in your data files once at a time or all in one go. Plus, you should get a 
 # grasp of what you are dealing with, because higher-order statistics, for instance, are much easier understood if you 
-# know what the data you work with looks like.
+# know what the data you work with look like.
 
 # First, you build the digital montage of your eeg system. That means you have to know how many channels you used, what
 # labels they had and according to which basic montage they were distributed across the scalp.
