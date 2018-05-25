@@ -106,6 +106,9 @@ raw.ch_names
 
 # Now look for events with 'mne.find_events' in your raw file's stimulus channel with the events' onsets, only including
 # events that have a duration of at least .002 seconds.
+events = mne.find_events(raw, output='onset', min_duration=0.002)
+
+# ... or
 events = mne.find_events(raw, stim_channel='Stim', output='onset', 
                          min_duration=0.002)
 
