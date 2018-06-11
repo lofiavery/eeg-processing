@@ -45,10 +45,10 @@ channel_types = ['eeg',	'eeg',	'eeg',	'eeg',	'eeg',	'eeg',	'eeg',	'eeg',
                  'eeg',	'eeg',	'eeg',	'eeg',	'eeg',	'eeg', 'eeg', 'ecg']
 
 # Note the samlping rate of your recording (in your case most likely 5000 Hz)
-s_freq = 5000
+sfreq = 5000
 
 # Finally, bring it all together with MNE's function for creating custoimzed EEG info files
-info_custom = mne.create_info(channel_names, s_freq, channel_types, montage)
+info_custom = mne.create_info(channel_names, sfreq, channel_types, montage)
 # You also my add a short description of the data set
 info_custom['description'] = 'My experiment with simultaneous EEG-fMRI'
 
@@ -74,10 +74,10 @@ channel_types = ['eeg',	'eeg',	'eeg',	'eeg',	'eeg',	'eeg',	'eeg',	'eeg',
                  'eog',	'eog', 'stim']
                  
 # Note the samlping rate of your recording (in your case most likely 1024 Hz)
-s_freq = 1024
+sfreq = 1024
 
 # Finally, bring it all together with MNE's function for creating custoimzed EEG info files
-info_custom = mne.create_info(channel_names, s_freq, channel_types, montage)
+info_custom = mne.create_info(channel_names, sfreq, channel_types, montage)
 # You also my add a short description of the data set
 info_custom['description'] = 'My experiment with 64 EEG channels plus two EOG channels'
 
@@ -109,6 +109,10 @@ raw.info = info_custom
 # hold of any information that is stored in raw.
 raw.ch_names
 
+# Next, define the type of data you have provided in 'picks'
+picks = mne.pick_types(raw.info, meg=False, eeg=True, eog=True,
+                       stim=True)
+
 # Now look for events with 'mne.find_events' in your raw file's stimulus channel with the events' onsets, only including
 # events that have a duration of at least .002 seconds.
 events = mne.find_events(raw, output='onset', min_duration=0.002)
@@ -137,3 +141,7 @@ raw.set_eeg_reference(ref_channels='average')
 # You can have a look at your raw data and browse through it. However, for browsing you will probably have to switch to
 # the terminal and use mne_browse_raw. This will open an interactive window where you can just scroll through the raw data.
 raw.plot(block=True)
+
+# If you want to save a file you have been working on, use the .save function for instances of raw or epochs. Note
+# the respective naming conventions for these file types in MNE.
+raw.save('Sub1-raw.fif', picks=picks, overwrite=True)
