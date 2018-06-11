@@ -25,9 +25,13 @@ for filename in glob.glob(os.path.join(data_path, '*.fif')):
     # add a subject integer to the data path
     data_path = '/Volumes/INTENSO/DPX_EEG_fMRI/EEG/'
 
-    # Read the raw EEG data that has been preprocessed
+    # Read the raw EEG data that has been pre-processed, create an event file and down-sample the data for easier handling.
     raw = mne.io.read_raw_fif(data_path, events=None, event_id=None, preload=True)
     events = mne.find_events(raw, stim_channel='Stim', output='onset', min_duration=0.002)
+    
+    # The original samling rate has to be multiple of the new lower sampling rate. For 1024 Hz choose 256 Hz
+    # and for 5000 Hz sample data down to 250 Hz.
+    raw.resample(256, npad="auto") 
     
     # Define the stimulus labels for epoching by assigning numbers to labels. In the MNE event structure there are 
     # three columns: onsets in samples, previous_event_id  and event_id. By providing new id's you can ease epoching.
