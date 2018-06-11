@@ -56,10 +56,11 @@ info_custom['description'] = 'My experiment with simultaneous EEG-fMRI'
 montage = mne.channels.read_montage(kind='biosemi64')
             
 # Write a list of channel names
-channel_names = ['Fp1','AF7','AF3','F1','F3','F5','F7','FT7','FC5','FC3','FC1','C1','C3','C5','T7','TP7','CP5','CP3','CP1',
-                 'P1','P3','P5','P7','P9','PO7','PO3','O1','Iz','Oz','POz','Pz','CPz','Fpz','Fp2','AF8','AF4','AFz','Fz',
-                 'F2','F4','F6','F8','FT8','FC6','FC4','FC2','FCz','Cz','C2','C4','C6','T8','TP8','CP6','CP4','CP2','P2','P4',
-                 'P6','P8','P10','PO8','PO4','O2','EOG_blink','EOG_sac','Stim']
+channel_names = ['Fp1','AF7','AF3','F1','F3','F5','F7','FT7','FC5','FC3','FC1','C1','C3','C5','T7',
+                 'TP7','CP5','CP3','CP1','P1','P3','P5','P7','P9','PO7','PO3','O1','Iz','Oz','POz',
+                 'Pz','CPz','Fpz','Fp2','AF8','AF4','AFz','Fz','F2','F4','F6','F8','FT8','FC6','FC4',
+                 'FC2','FCz','Cz','C2','C4','C6','T8','TP8','CP6','CP4','CP2','P2','P4',
+                 'P6','P8','P10','PO8','PO4','O2','EXG1','EXG2','Stim']
                  
 # Write a list of channel types (e.g., eeg, eog, ecg)
 channel_types = ['eeg',	'eeg',	'eeg',	'eeg',	'eeg',	'eeg',	'eeg',	'eeg',	
@@ -117,8 +118,10 @@ events = mne.find_events(raw, stim_channel='Stim', output='onset',
                          min_duration=0.002)
 
 # For initial plotting, do some very basic data cleaning (filter, new reference) with a band-pass filter (high-pass=0.5 Hz
-# and low-pass=30Hz). As a new reference, I recommend an average reference for the 64-channel system from the lab in the
-# Department of Psychology and a mastoid reference (TP9 and TP10) for the 32-channel system from the lab in the clinic.
+# and low-pass=30Hz). Of course, the choice of reference depends on your analyses, what you intend to study and what system
+# you are using. As a new reference and a general recommendation, I suggest an average reference for the 64-channel system 
+# from the lab in the Department of Psychology and a mastoid reference (TP9 and TP10) for the 32-channel system 
+# from the lab in the clinic.
 raw.filter(0.5, 30., n_jobs=1, fir_design='firwin') 
 
 raw.set_eeg_reference(ref_channels=['TP9','TP10']) 
@@ -132,5 +135,5 @@ raw.set_eeg_reference(ref_channels='average')
 # are scattered around a head shape that was specified with coordinates from the montage you have provided.
 
 # You can have a look at your raw data and browse through it. However, for browsing you will probably have to switch to
-# the terminal and use mne_browse_raw. This will open a window where you can just scroll through the raw data.
+# the terminal and use mne_browse_raw. This will open an interactive window where you can just scroll through the raw data.
 raw.plot(block=True)
