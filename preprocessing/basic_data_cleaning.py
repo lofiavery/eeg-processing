@@ -75,3 +75,46 @@ ica.plot_properties(raw, picks=[])
 # In order to remove components, you have to specify component numbers when back-projecting the decomposition
 # to a continuous raw signal. Then, the specified components' signal contribution will be excluded from the data.
 ica.apply(raw, exclude=[])
+
+
+# For the second part, the type of loop you build to read data and save it, depends on your creativity and how your naming
+# convention for data sets looks like. Here are two examples that work fine for me.
+
+# With N=13 participants named 'Sub' + their numerical index, this loop will successively perform the pre-processing 
+# until ICA and save ICA decompositons.
+for x in range(1, 14):
+    
+    # Each time the loop goes through a new iteration, 
+    # add a subject integer to the data path.
+    data_path = './Sub%d.set' % (x) 
+    
+    # Read the raw EEG data.
+    raw = mne.io.read_raw_edf(data_path, montage=montage, preload=True, stim_channel=-1,
+                              eog=[u'EXG1', u'EXG2'] exclude=[u'EXG3', u'EXG4', u'EXG5', u'EXG6', u'EXG7', u'EXG8']) 
+    picks = mne.pick_types(raw.info, meg=False, eeg=True, eog=True, stim=True)
+    raw.filter(0.5, 30., n_jobs=1, fir_design='firwin') 
+    raw.set_eeg_reference(ref_channels='average') 
+    ica.fit(raw, picks=picks, decim=decim, reject=reject)
+    ica.save('./Sub%d-ica.fif.gz' % (x))
+    
+    
+# ... perhaps even easier is this version with glob and os, as it simply reads all files under the given path
+# with a specified suffix in the filename.
+
+import glob
+import os
+
+data_path = 'your path to all your raw files'     
+for filename in glob.glob(os.path.join(data_path, '*.bdf')):
+    raw = mne.io.read_raw_edf(data_path, montage=montage, preload=True, stim_channel=-1,
+                              eog=[u'EXG1', u'EXG2'] exclude=[u'EXG3', u'EXG4', u'EXG5', u'EXG6', u'EXG7', u'EXG8']) 
+    picks = mne.pick_types(raw.info, meg=False, eeg=True, eog=True, stim=True)
+    raw.filter(0.5, 30., n_jobs=1, fir_design='firwin') 
+    raw.set_eeg_reference(ref_channels='average') 
+    ica.fit(raw, picks=picks, decim=decim, reject=reject)
+    ica.save('./%d-ica.fif.gz' % (filename))
+    
+# Concerning ICA component rejection, I will upload further scripts showing an advanced method of identifying 
+# artefact components. For a start, I recommend that you do this manually by checking the component properties of
+# each subject yourself. This is also very useful in learning more about how EEG signal is composed and what
+# to expect from artefact and event-related signal.
