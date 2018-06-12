@@ -144,6 +144,11 @@ raw.set_eeg_reference(ref_channels='average')
 # the terminal and use mne_browse_raw. This will open an interactive window where you can just scroll through the raw data.
 raw.plot(block=True)
 
-# If you want to save a file you have been working on, use the .save function for instances of raw or epochs. Note
-# the respective naming conventions for these file types in MNE.
+# If you want to have a look at the data in raw numbers, you can extract data from raw objects. The start and stop
+# arguments have to be given as samples. You can also extract time points for data samples by setting the 
+# return_times argument to True.
+raw.get_data(picks=picks, start=0, stop=None, return_times=False)
+
+# If you want to save a file you have been working on, use the .save function for instances of raw or epochs. Mind
+# the respective naming conventions for these file types in MNE ('-raw.fif', '-epo.fif', '-ave.fif', '-eve.fif', etc).
 raw.save('Sub1-raw.fif', picks=picks, overwrite=True)
