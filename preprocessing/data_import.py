@@ -134,9 +134,11 @@ raw.set_eeg_reference(ref_channels=['TP9','TP10'])
 raw.set_eeg_reference(ref_channels='average') 
 
 # Imagine your EEG data as it was during the recording, a collection of time points by channel in microvolt. Instead of
-# several colorful graphs, you now have a matrix with rows and columns containing spatial data (electrodes) over time
+# several colorful graphs, you now have a numpy array with rows and columns containing spatial data (electrodes) over time
 # (sampling points) that can be translated into another temporal scale (miliseconds) for plotting. These spatial data
-# are scattered around a head shape that was specified with coordinates from the montage you have provided.
+# are scattered around a head shape that was specified with coordinates from the montage you have provided. A more
+# detailed description of specifically the MNE raw data structure can be found here: 
+# https://martinos.org/mne/dev/auto_tutorials/plot_object_raw.html
 
 # You can have a look at your raw data and browse through it. However, for browsing you will probably have to switch to
 # the terminal and use mne_browse_raw. This will open an interactive window where you can just scroll through the raw data.
