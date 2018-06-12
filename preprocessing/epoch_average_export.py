@@ -52,6 +52,7 @@ for filename in glob.glob(os.path.join(data_path, '*.fif')):
     evoked_classic = epochs['modern_classic'].average() # Derive ERPs locked specifically to the onset of modern 
                                                         # classic music stimuli.
     evoked_classic.apply_baseline(-0.25, 0)
+    evoked.save(output_dir + '%d-ave.fif' % (filename))
     
 # For higher-level analyses it is adivsable to export data frames with your averaged or epoched data, 
 # especially if you intend to perform them in a different programming environment like R.
@@ -67,3 +68,13 @@ for filename in glob.glob(os.path.join(output_dir, '*epo.fif')):
     df_all_epochs = df_all_epochs.append(df)
 
 df_all_epochs.to_csv('./eeg_epochs.csv')
+
+# You can plot averaged results with topoplots at specific time points with the following.
+ts_args = dict(gfp=True, zorder='std',
+               ylim =dict(eeg=[-10,10]), unit=True)
+topomap_args = dict(sensors=False, vmax=8, vmin=-8, average=0.025, contours=2)
+music_example = evoked.plot_joint(title=None, times=[0, .1, .2, .3, .4, .5, .6, 1.],
+                       ts_args=ts_args, topomap_args=topomap_args)
+music_example.savefig('./music_gfp_stim_channel.pdf', bbox_inches='tight')
+
+
