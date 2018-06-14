@@ -106,7 +106,7 @@ raw.info = info_custom
 
 # If you just type in raw.info, your IPython console will give you all the header information of your file. For instance,
 # if you type 'raw.ch_names', the console returns the list of channel labels you specified earlier. Similarly you can grab
-# hold of any information that is stored in raw.
+# hold of any information that is stored in raw. 
 raw.ch_names
 
 # Next, define the type of data you have provided in 'picks'
@@ -126,7 +126,7 @@ events = mne.find_events(raw, stim_channel='Stim', output='onset',
 # you are using. As a new reference and a general recommendation, I suggest an average reference for the 64-channel system 
 # from the lab in the Department of Psychology and a mastoid reference (TP9 and TP10) for the 32-channel system 
 # from the lab in the clinic.
-raw.filter(0.5, 30., n_jobs=1, fir_design='firwin') 
+raw.filter(0.1, 30., n_jobs=1, fir_design='firwin') 
 
 raw.set_eeg_reference(ref_channels=['TP9','TP10']) 
 
@@ -142,7 +142,7 @@ raw.set_eeg_reference(ref_channels='average')
 
 # You can have a look at your raw data and browse through it. However, for browsing you will probably have to switch to
 # the terminal and use mne_browse_raw. This will open an interactive window where you can just scroll through the raw data.
-raw.plot(block=True)
+raw.plot()
 
 # If you want to have a look at the data in raw numbers, you can extract data from raw objects. The start and stop
 # arguments have to be given as samples. You can also extract time points for data samples by setting the 
