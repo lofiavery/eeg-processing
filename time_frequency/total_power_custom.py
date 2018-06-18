@@ -11,7 +11,7 @@ import math
 import glob
 import os
 
-elec=range(1,65)
+elec=65
 
 def nextpow2(n):
     m_f = np.log2(n)
@@ -25,7 +25,7 @@ for epochs in glob.glob(os.path.join(data_path, '*.fif')):
 
     EEG = mne.read_epochs(epochs)
 
-    for E in elec:
+    for E in range(1,elec):
         
         tmin=min(EEG.times)
         tmax=max(EEG.times)
@@ -52,7 +52,7 @@ for epochs in glob.glob(os.path.join(data_path, '*.fif')):
         
         baseidx = EEG.time_as_index((-1.7, -0.3))
         
-        for fi in num_frex:
+        for fi in range(1,num_frex):
             
             w = math.sqrt(1/(cycles[fi]*math.sqrt(np.pi))) * np.exp(np.multiply(2*1j*np.pi*frex[fi], time))
             wavelet = np.fft.fft(np.multiply(w, np.exp(-time**2./(2*(cycles[fi]**2)))), n_conv_pow2 )
