@@ -19,14 +19,16 @@ import numpy as np
 
 output_dir = 'your output directory for epochs'
 data_path = 'your path to all your pre-processed files'     
-for filename in glob.glob(os.path.join(data_path, '*.fif')):
+for file in glob.glob(os.path.join(data_path, '*.fif')):
+    
+    filepath, filename = os.path.split(file)
     
     # Each time the loop goes through a new iteration, 
     # add a subject integer to the data path
     data_path = '/Volumes/INTENSO/DPX_EEG_fMRI/EEG/'
 
     # Read the raw EEG data that has been pre-processed, create an event file and down-sample the data for easier handling.
-    raw = mne.io.read_raw_fif(data_path, events=None, event_id=None, preload=True)
+    raw = mne.io.read_raw_fif(file, events=None, event_id=None, preload=True)
     events = mne.find_events(raw, stim_channel='Stim', output='onset', min_duration=0.002)
     
     # The original samling rate has to be multiple of the new lower sampling rate. For 1024 Hz choose 256 Hz
@@ -41,7 +43,7 @@ for filename in glob.glob(os.path.join(data_path, '*.fif')):
     # and save the data as fif, for later uses of unaveraged epochs. Do not perform a baseline correction at this point,
     # since you might want to use different baselines for different analyses (i.e., time-frequency analysis).
     epochs = mne.Epochs(raw, events, event_id=event_id, tmin=-0.5, tmax=1.0)
-    epochs.save(output_dir + '%d-epo.fif' % (filename))
+    epochs.save(output_dir + filename + '-epo.fif')
     
     # Average epoched data over conditions and apply baseline correction for Event-Related Potentials.
     evoked_music = epochs['music_onset'].average() # Derive ERPs locked on the onset of any music stimulus.
@@ -52,7 +54,7 @@ for filename in glob.glob(os.path.join(data_path, '*.fif')):
     evoked_classic = epochs['modern_classic'].average() # Derive ERPs locked specifically to the onset of modern 
                                                         # classic music stimuli.
     evoked_classic.apply_baseline(-0.25, 0)
-    evoked.save(output_dir + '%d-ave.fif' % (filename))
+    evoked.save(output_dir + filename + '-ave.fif')
     
 # For higher-level analyses it is adivsable to export data frames with your averaged or epoched data, 
 # especially if you intend to perform them in a different programming environment like R.
