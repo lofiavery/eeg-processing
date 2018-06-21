@@ -16,9 +16,9 @@ from mne.preprocessing import ICA
 # I'm outlining this approach, as it is more flexible and works for both labs.
 data_path='./Sub1.bdf'
 raw = mne.io.read_raw_edf(data_path, montage=chanlocs, preload=True, stim_channel=-1,
-                          exclude=[u'EXG1', u'EXG2', u'EXG3', u'EXG4', u'EXG5', u'EXG6', u'EXG7', u'EXG8']) 
+                          eog=[u'EXG1', u'EXG2'], exclude=[u'EXG3', u'EXG4', u'EXG5', u'EXG6', u'EXG7', u'EXG8']) 
 
-picks = mne.pick_types(raw.info, meg=False, eeg=True, eog=False,
+picks = mne.pick_types(raw.info, meg=False, eeg=True, eog=True,
                        stim=True)
 
 # Filter and rereference the data to reduce noise and remove artefact frequencies
@@ -87,16 +87,18 @@ for x in range(1, 14):
     
     # Each time the loop goes through a new iteration, 
     # add a subject integer to the data path.
-    data_path = './Sub%d.set' % (x) 
+    data_path = './Sub%d.bdf' % (x) 
     
     # Read the raw EEG data.
     raw = mne.io.read_raw_edf(data_path, montage=montage, preload=True, stim_channel=-1,
-                              eog=[u'EXG1', u'EXG2'] exclude=[u'EXG3', u'EXG4', u'EXG5', u'EXG6', u'EXG7', u'EXG8']) 
+                              eog=[u'EXG1', u'EXG2'], exclude=[u'EXG3', u'EXG4', u'EXG5', u'EXG6', u'EXG7', u'EXG8']) 
     picks = mne.pick_types(raw.info, meg=False, eeg=True, eog=True, stim=True)
+    
     raw.filter(0.5, 30., n_jobs=1, fir_design='firwin') 
     raw.set_eeg_reference(ref_channels='average') 
-    ica.fit(raw, picks=picks, decim=decim, reject=reject)
-    ica.save('./Sub%d-ica.fif.gz' % (x))
+    
+    ica.fit(raw, picks=picks, decim=decim)
+    ica.save('./Sub' + x + '-ica.fif')
     
     
 # ... perhaps even easier is this version with glob and os, as it simply reads all files under the given path
@@ -106,14 +108,20 @@ import glob
 import os
 
 data_path = 'your path to all your raw files'     
-for filename in glob.glob(os.path.join(data_path, '*.bdf')):
-    raw = mne.io.read_raw_edf(data_path, montage=montage, preload=True, stim_channel=-1,
+for file in glob.glob(os.path.join(data_path, '*.bdf')):
+    
+    filepath, filename = os.path.split(file)
+    filename, ext = os.path.splitext(filename)
+      
+    raw = mne.io.read_raw_edf(file, montage=montage, preload=True, stim_channel=-1,
                               eog=[u'EXG1', u'EXG2'] exclude=[u'EXG3', u'EXG4', u'EXG5', u'EXG6', u'EXG7', u'EXG8']) 
     picks = mne.pick_types(raw.info, meg=False, eeg=True, eog=True, stim=True)
+    
     raw.filter(0.5, 30., n_jobs=1, fir_design='firwin') 
     raw.set_eeg_reference(ref_channels='average') 
-    ica.fit(raw, picks=picks, decim=decim, reject=reject)
-    ica.save('./%d-ica.fif.gz' % (filename))
+    
+    ica.fit(raw, picks=picks, decim=decim)
+    ica.save(filename + '-ica.fif')
     
 # Concerning ICA component rejection, I will upload further scripts showing an advanced method of identifying 
 # artefact components. For a start, I recommend that you do this manually by checking the component properties of
