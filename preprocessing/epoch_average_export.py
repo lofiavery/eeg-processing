@@ -22,6 +22,7 @@ data_path = 'your path to all your pre-processed files'
 for file in glob.glob(os.path.join(data_path, '*.fif')):
     
     filepath, filename = os.path.split(file)
+    filename, ext = os.path.splitext(filename)
     
     # Each time the loop goes through a new iteration, 
     # add a subject integer to the data path
