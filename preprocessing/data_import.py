@@ -8,10 +8,11 @@ Created on Sun May 13 08:51:15 2018
 # Biosemi or BrainProducts EEG-systems. So odds are that your data are saved in the .bdf or .eeg format. 
 # The following script will help you read in your data files once at a time or all in one go. Plus, you should get a 
 # grasp of what you are dealing with, because higher-order statistics, for instance, are much easier understood if you 
-# know what the data you work with look like.
+# know what the data you work with look like. For this reason, we'll start by building an info file containing
+# information about your EEG file.
 
-# First, you build the digital montage of your eeg system. That means you have to know how many channels you used, what
-# labels they had and according to which basic montage they were distributed across the scalp.
+# First, you build the digital montage of your eeg system. That means you select how many channels you used, what
+# labels they had and according to which basic montage they were distributed across the head.
 # It's also possible to specifiy a path to a montage file you alreday build in the formats ‘.elc’, ‘.txt’, ‘.csd’, ‘.elp’,
 # ‘.hpts’, ‘.sfp’, ‘.loc’, ‘.locs’ and ‘.eloc’ or .bvef.
 
@@ -93,7 +94,9 @@ data_path = './Sub1.bdf'
 # Read the raw EEG data. Note the naming convention you use for your triggers set in the EEG. The object 'raw' is an 
 # instance of raw EEG data. The argument 'preload' enables us to directly load the file into memory and eases quick data
 # manipulation. For Biosemi data files, stimulus codes are stored in an additional empty channel that only contains bits 
-# 1-16. We need to know the stimulus channel and specify it while importing data, look for events with 'mne.find_events'
+# 1-16. With -1 we indicate that the last imported channel is the stimulus channel. Alternatively, the stimulus channel
+# can be identified by providing its name as a string (for example, 'Stim' in our customized info file).
+# We need to know the stimulus channel and specify it while importing data, look for events with 'mne.find_events'
 # when data is imported or provide event information by separately importing a customized event file. The lists of
 # 'eog' and 'exclude' is a list of external channels I wrote in the config file we use in the lab. You will notice a lot of
 # unnecessary empty channels that were meant for other experiments also utilizing this config file. Just ignore all but the
