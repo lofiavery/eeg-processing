@@ -9,7 +9,7 @@ Created on Sun May 13 08:51:15 2018
 # The following script will help you read in your data files once at a time or all in one go. Plus, you should get a 
 # grasp of what you are dealing with, because higher-order statistics, for instance, are much easier understood if you 
 # know what the data you work with look like. For this reason, we'll start by building an info file containing
-# information about your EEG file.
+# information about your EEG file as practice.
 
 # First, you build the digital montage of your eeg system. That means you select how many channels you used, what
 # labels they had and according to which basic montage they were distributed across the head.
@@ -126,11 +126,21 @@ events = mne.find_events(raw, stim_channel='Stim', output='onset',
 
 # For initial plotting, do some very basic data cleaning (filter, new reference) with a band-pass filter (high-pass=0.5 Hz
 # and low-pass=30Hz). Of course, the choice of reference depends on your analyses, what you intend to study and what system
-# you are using. As a new reference and a general recommendation, I suggest an average reference for the 64-channel system 
-# from the lab in the Department of Psychology and a mastoid reference (TP9 and TP10) for the 32-channel system 
-# from the lab in the clinic.
-raw.filter(0.1, 30., n_jobs=1, fir_design='firwin') 
+# you are using. 
 
+# Filtering refers to the exclusion of specific portions of data identified by frequency. Choose your
+# filters carefully, since they distort your data or exclude sections that are actually relevant to
+# your research. For instance, in my EEG-fMRI thesis I was predominantely looking for frequencies 
+# in the range of 1 to 12 Hz. Thus, I want to avoid blurred edges around these frequencies and, of course, 
+# I want to pick the filter cut-offs in manner that leaves my frequencies of interest untouched.
+raw.filter(0.1, 30, n_jobs=1, fir_design='firwin') 
+
+# As a new reference and a general recommendation, I suggest an average reference for the 64-channel system 
+# from the lab in the Department of Psychology. References can attenuate very specific changes in the EEG.
+# Thus, choosing the correct reference depends on your research and experiment. An average reference is probably 
+# the most versatile type of reference, as it includes the mean of all electrodes across the scalps, making it
+# more robust with an increasing amount of available electordes. For the 32-channel system in the lab 
+# in the clinic I recommend a mastoid reference (TP9 and TP10). 
 raw.set_eeg_reference(ref_channels=['TP9','TP10']) 
 
 # ... or
