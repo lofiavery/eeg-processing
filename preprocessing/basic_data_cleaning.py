@@ -18,8 +18,12 @@ data_path='./Sub1.bdf'
 raw = mne.io.read_raw_edf(data_path, montage=chanlocs, preload=True, stim_channel=-1,
                           eog=[u'EXG1', u'EXG2'], exclude=[u'EXG3', u'EXG4', u'EXG5', u'EXG6', u'EXG7', u'EXG8']) 
 
-picks = mne.pick_types(raw.info, meg=False, eeg=True, eog=True,
-                       stim=True)
+# The pick_types function provides a very basic convenience which is channel selection.
+# On occasion you wish to select only specific sets of channels. For instance, when
+# entering data channels into ICA you might want to exclude channels previously marked
+# as bad channels, or you might have sets of EOG, EEG, EMG, or ECG, which you want to filter
+# differently.
+picks = mne.pick_types(raw.info, meg=False, eeg=True, eog=True)
 
 # Filter and rereference the data to reduce noise and remove artefact frequencies
 raw.filter(0.5, 30., n_jobs=1, fir_design='firwin') 
