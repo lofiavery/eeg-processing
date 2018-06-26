@@ -25,8 +25,8 @@ raw = mne.io.read_raw_edf(data_path, montage=chanlocs, preload=True, stim_channe
 # differently.
 picks = mne.pick_types(raw.info, meg=False, eeg=True, eog=True)
 
-# Filter and rereference the data to reduce noise and remove artefact frequencies
-raw.filter(0.5, 30., n_jobs=1, fir_design='firwin') 
+# Filter and rereference the data to reduce noise and remove artefact frequencies.
+raw.filter(0.1, 50., n_jobs=1, fir_design='firwin') 
 raw.set_eeg_reference(ref_channels='average', projection=False) 
 
 # With just filtering and rereferencing the signal to a better offline reference data are not free from artefacts.
