@@ -27,7 +27,6 @@ Created on Fri Jun 29 18:40:23 2018
 import mne
 
 path = 'your raw data path'
-output = 'output path'
 file = 'sub01-raw.fif'
 
 raw = mne.read_raw(path + file, preload=True)
@@ -73,7 +72,7 @@ epochs['B']
 # represented by 71.
 mne.merge_events(events, [71, 72, 73, 74, 75], 71, replace_events=True)
 
-# As described above, there are also probes in the paradigm. These elecit
+# As described above, there are also probes in the paradigm. These elicit
 # a large P3, which is sensitive to expectancy violations, because subjects 
 # needed to adapt their behavior if an ambiguous cue was followed by an
 # unexpected probe (Y) instead of the more frequent probe (X). There are
