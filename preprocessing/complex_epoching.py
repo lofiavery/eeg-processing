@@ -15,13 +15,13 @@ Created on Fri Jun 29 18:40:23 2018
 # purposes, ranging from easy to complex.
 
 # As an example, I'll be using the Dot Pattern Expectancy task used in the lab
-# of the Neuropsychology Section (Marburg), in which there are always to successive
+# of the Neuropsychology Section (Marburg), in which there are always two successive
 # stimuli - a cue and a probe. The cue gives an indication of what type of probe
 # is going to appear with one cue being highly predictive and the other one ambiguous. 
 # Depending on the fit of cue and probe (each consisting of dot patterns), 
-# there are two possible responses (left and right button). Reaction have to be
-# given as soon as the probe appears. So in principle there is a hint that is helpful
-# or not and a target that requires different responses.
+# there are two possible responses (left and right button). Reactions have to be
+# given as soon as the probe appears. So in principle there is a hint that is more
+# or less helpful and a target that requires on of two different responses.
 
 # Set up paths and load raw data
 import mne
