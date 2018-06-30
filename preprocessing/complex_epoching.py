@@ -1,7 +1,7 @@
 """
 Created on Fri Jun 29 18:40:23 2018
 
-@author: maltegueth
+@author: Malte Gueth
 """
 
 # Epoching of events in the EEG can be difficult. If you're only interested
