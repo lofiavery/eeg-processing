@@ -49,9 +49,10 @@ channel_types = ['eeg',	'eeg',	'eeg',	'eeg',	'eeg',	'eeg',	'eeg',	'eeg',
 sfreq = 5000
 
 # Finally, bring it all together with MNE's function for creating custoimzed EEG info files
-info_custom = mne.create_info(channel_names, sfreq, channel_types, montage)
+info_custom = mne.create_info(channel_names, sfreq, channel_types, montage, buffer_size_sec)
 # You also my add a short description of the data set
 info_custom['description'] = 'My experiment with simultaneous EEG-fMRI'
+raw.info['buffer_size_sec'] = 1
 
 ### Lab at the Department of Psychology
 montage = mne.channels.read_montage(kind='biosemi64')
