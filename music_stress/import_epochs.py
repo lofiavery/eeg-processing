@@ -31,12 +31,13 @@ info = mne.create_info(ch_labels, sfreq, ch_types)
 raw.info['description'] = 'Music stress experiment in the MRI scanner with EDA and a respiratory channel'
 raw.info['buffer_size_sec'] = 1
 
-# Pre-processing should not be the most vital part of this analysis, so a simple high-pass filter
-# should be enough. To this end, just pick a low frequency cut-off in Hz. If you set h_freq to
+# Pre-processing should not be the most vital part of this analysis. Simple filtering
+# should be enough. To this end, just pick a frequency cut-off in Hz. If you set h_freq to
 # 'None', you only apply a high-pass filter, so only frequencies above the set threshold are kept.
-# The same applies for the inverse.
+# Conversly, if you only select a higher cut-off, a low-pass filter is applied and only
+# frequencies below the threshold are kept.
 picks = mne.pick_types(raw.info, misc=True)
-raw.filter(l_freq = 0.01, h_freq = None, picks=picks)
+raw.filter(l_freq = None, h_freq = None, picks=picks)
 
 # Choose the channel containing your event codes, create a numpy array (here named 'events') with three
 # columns of onsets in sampling points, previous channel values (here, always 0, because with this value
