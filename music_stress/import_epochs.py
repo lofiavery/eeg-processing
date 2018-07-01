@@ -61,6 +61,7 @@ events_plot.savefig('./event_channel.pdf', bbox='tight')
 # 'Sync' and 'response', because these are the only ones I specified in 'event_id'.
 # The temporal range of epochs is determined with the 'tmin' and 'tmax' parameters in seconds.
 # 'baseline' refers to a baseline correction and picks limits epoching to the channels 
-# selected as 'True' in the list of logicals 'picks'.
+# selected as 'True' in the list of logicals 'picks'. Hence, respiratory responses and
+# electrodermal responses would be epoched.
 epochs = mne.Epochs(raw, events=events, event_id=event_id, tmin=-1, tmax=5,
                     baseline=None, picks=picks, preload=True)
