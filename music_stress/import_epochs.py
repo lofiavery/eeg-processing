@@ -65,3 +65,8 @@ events_plot.savefig('./event_channel.pdf', bbox='tight')
 # electrodermal responses would be epoched.
 epochs = mne.Epochs(raw, events=events, event_id=event_id, tmin=-1, tmax=5,
                     baseline=None, picks=picks, preload=True)
+epochs.save('./music_stress-epo.fif')
+
+# If required, you can write the data of each epoch into a numpy array with the dimensions 
+# epochs, channels, and sample points.
+data = epochs['response_or_something'].get_data()
