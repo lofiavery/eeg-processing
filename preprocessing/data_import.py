@@ -86,15 +86,19 @@ info_custom['description'] = 'My experiment with 64 EEG channels plus two EOG ch
 
 # After having written your customized info file, you can finally read in your data. Let's start with a single file.
 # Write the path to your file. In case of .eeg files, make sure you have stored the identically named .vmrk (markers) and 
-# .vhdr (headers) files under the same path, since the .eeg file contains the raw values and references the other two.
-data_path = './Sub1.eeg'
+# .vhdr (headers) files under the same path, since the .eeg file contains the raw values and references the other two. 
+# For this file type, direct the path to the .vhdr.
+data_path = './Sub1.vhdr'
 
 # ... or look for the bdf file
 data_path = './Sub1.bdf'
 
 # Read the raw EEG data. Note the naming convention you use for your triggers set in the EEG. The object 'raw' is an 
 # instance of raw EEG data. The argument 'preload' enables us to directly load the file into memory and eases quick data
-# manipulation. For Biosemi data files, stimulus codes are stored in an additional empty channel that only contains bits 
+# manipulation. 
+raw = mne.io.read_raw_brainvision(data_path, montage=montage, preload=True)
+
+# For Biosemi data files, stimulus codes are stored in an additional empty channel that only contains bits 
 # 1-16. With -1 we indicate that the last imported channel is the stimulus channel. Alternatively, the stimulus channel
 # can be identified by providing its name as a string (for example, 'Stim' in our customized info file).
 # We need to know the stimulus channel and specify it while importing data, look for events with 'mne.find_events'
