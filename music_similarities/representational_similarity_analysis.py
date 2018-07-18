@@ -25,7 +25,7 @@ for file in glob.glob(os.path.join(path, '*ICA-raw.fif')):
     # as noted in the event_id dict
     new_events = events[:,2]
     
-    for i in range(new_events[:,2].size):
+    for i in range(new_events.size):
         
         if (new_events[i] == 1):
             new_events[i] = 1
