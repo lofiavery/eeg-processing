@@ -68,6 +68,7 @@ for file in glob.glob(os.path.join(path, '*ICA-raw.fif')):
         elif (new_events[i] == 20):
               new_events[i] = 15
 
+    events[:,2] = new_events
     event_id = {'alternative': 1, 'punk': 2, 'heavymetal': 3,
                 'rocknroll': 4, 'psychedelic': 5, 'baroque': 6,
                 'classic': 7, 'modernclassic': 8, 'renaissance': 9,
