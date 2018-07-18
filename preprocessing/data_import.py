@@ -96,7 +96,7 @@ data_path = './Sub1.bdf'
 # Read the raw EEG data. Note the naming convention you use for your triggers set in the EEG. The object 'raw' is an 
 # instance of raw EEG data. The argument 'preload' enables us to directly load the file into memory and eases quick data
 # manipulation. 
-raw = mne.io.read_raw_brainvision(data_path, montage=montage, preload=True)
+raw = mne.io.read_raw_brainvision(data_path, montage=montage, eog=[u'EXG1', u'EXG2'], preload=True)
 
 # For Biosemi data files, stimulus codes are stored in an additional empty channel that only contains bits 
 # 1-16. With -1 we indicate that the last imported channel is the stimulus channel. Alternatively, the stimulus channel
@@ -107,7 +107,7 @@ raw = mne.io.read_raw_brainvision(data_path, montage=montage, preload=True)
 # unnecessary empty channels that were meant for other experiments also utilizing this config file. Just ignore all but the
 # first two EXG channels (EOG channels).
 raw = mne.io.read_raw_edf(data_path, montage=montage, preload=True, stim_channel=-1,
-                          eog=[u'EXG1', u'EXG2'] exclude=[u'EXG3', u'EXG4', u'EXG5', u'EXG6', u'EXG7', u'EXG8']) 
+                          eog=[u'EXG1', u'EXG2'], exclude=[u'EXG3', u'EXG4', u'EXG5', u'EXG6', u'EXG7', u'EXG8']) 
 
 # Replace the mne info structure with the customized one that has the correct labels, channel types and positions.
 raw.info = info_custom
