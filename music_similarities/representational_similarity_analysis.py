@@ -12,6 +12,10 @@ from sklearn.metrics import roc_auc_score
 
 import mne
 
+# Create a classifier
+clf = make_pipeline(StandardScaler(),
+                    LogisticRegression(C=1, solver='lbfgs'))
+
 # Load cleaned raw data and start epoching them as required
 path = './rawdata/'  
 for file in glob.glob(os.path.join(path, '*ICA-raw.fif')):
@@ -19,7 +23,7 @@ for file in glob.glob(os.path.join(path, '*ICA-raw.fif')):
     raw = mne.io.read_raw_fif(file, preload=True) 
     picks = mne.pick_types(raw.info, eeg=True)
         
-    events = mne.find_events(raw, initial_event=True)
+    events = mne.find_events(raw)
     
     # Recode genres that were sorted alphabetically to the desired integer assignments,
     # as noted in the event_id dict
@@ -81,43 +85,39 @@ for file in glob.glob(os.path.join(path, '*ICA-raw.fif')):
     epochs = mne.Epochs(raw, events=events, event_id=event_id, tmin=-0.5, tmax=6,
                         baseline=(-0.5, 0), picks=picks, preload=True)        
     epochs.resample(256) 
-    
-    # Concatenate epochs (first subject is skipped, because data set was invalid)
-    if file == './rawdata/sub-02-ICA-raw.fif':
-        all_epochs = epochs
-    else:
-        all_epochs = mne.concatenate_epochs([all_epochs, epochs])
-
-# Classify using the average signal in the defined window
-clf = make_pipeline(StandardScaler(),
-                    LogisticRegression(C=1, solver='lbfgs'))
                     
-# Crop the epochs to time windows you want to analyze separately
-X = epochs.copy().crop(0, 0.5).get_data().mean(axis=2)
-#X = epochs.copy().crop(2, 2.5).get_data().mean(axis=2)
-#X = epochs.copy().crop(4, 4.5).get_data().mean(axis=2)
+    # Crop the epochs to time windows you want to analyze separately
+    X = epochs.copy().crop(0, 0.5).get_data().mean(axis=2)
+    #X = epochs.copy().crop(2, 2.5).get_data().mean(axis=2)
+    #X = epochs.copy().crop(4, 4.5).get_data().mean(axis=2)
 
-y = epochs.events[:, 2]
+    y = epochs.events[:, 2]
 
-classes = set(y)
-cv = StratifiedKFold(n_splits=5, random_state=0, shuffle=True)
+    classes = set(y)
+    cv = StratifiedKFold(n_splits=5, random_state=0, shuffle=True)
 
 
-# Compute confusion matrix for each cross-validation fold
-y_pred = np.zeros((len(y), len(classes)))
-for train, test in cv.split(X, y):
-    # Fit
-    clf.fit(X[train], y[train])
-    # Probabilistic prediction (necessary for ROC-AUC scoring metric)
-    y_pred[test] = clf.predict_proba(X[test])
+    # Compute confusion matrix for each cross-validation fold
+    y_pred = np.zeros((len(y), len(classes)))
+    for train, test in cv.split(X, y):
+        # Fit
+        clf.fit(X[train], y[train])
+        # Probabilistic prediction (necessary for ROC-AUC scoring metric)
+        y_pred[test] = clf.predict_proba(X[test])
 
-confusion = np.zeros((len(classes), len(classes)))
-for ii, train_class in enumerate(classes):
-    for jj in range(ii, len(classes)):
-        confusion[ii, jj] = roc_auc_score(y == train_class, y_pred[:, jj])
-        confusion[jj, ii] = confusion[ii, jj]
+    confusion = np.zeros((len(classes), len(classes)))
+    for ii, train_class in enumerate(classes):
+        for jj in range(ii, len(classes)):
+            confusion[ii, jj] = roc_auc_score(y == train_class, y_pred[:, jj])
+            confusion[jj, ii] = confusion[ii, jj]
+            
+    # Add all confusion matrices for all subjects together and average them
+    if file == './rawdata/sub-02-ICA-raw.fif':
+        all_confusion = confusion
+    else:
+        all_confusion = np.append(all_confusion, confusion, axis=0)
         
-
+mean_confusion = all_confusion.mean(0)
 labels = {'alternative': 0, 'punk': 1, 'heavymetal': 2,
           'rocknroll': 3, 'psychedelic': 4, 'baroque': 5,
           'classic': 6, 'modernclassic': 7, 'renaissance': 8,
@@ -127,7 +127,7 @@ labels = {'alternative': 0, 'punk': 1, 'heavymetal': 2,
          } 
 
 fig, ax = plt.subplots(1)
-im = ax.matshow(confusion, cmap='RdBu_r', clim=[0.3, 0.7])
+im = ax.matshow(mean_confusion, cmap='RdBu_r', clim=[0.3, 0.7])
 ax.set_yticks(range(len(classes)))
 ax.set_yticklabels(labels)
 ax.set_xticks(range(len(classes)))
