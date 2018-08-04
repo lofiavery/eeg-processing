@@ -65,10 +65,12 @@ for file in glob.glob(os.path.join(data_path, '*.fif')):
 
 for filename in glob.glob(os.path.join(output_dir, '*epo.fif')):
     index, scaling_time = ['epoch', 'time'], 1e3
-    epochs = '/%d-epo.fif' % (filename)
-    current_epochs = mne.read_epochs(epochs)
+    current_epochs = mne.read_epochs(filename)
     df = current_epochs['music_onset'].to_data_frame(picks=None, scalings=None, scaling_time=scaling_time, index=index)  
-    df_all_epochs = df_all_epochs.append(df)
+    if filename == 'first filename':
+        df_all_epochs = df
+    else:
+        df_all_epochs = df_all_epochs.append(df)
 
 df_all_epochs.to_csv('./eeg_epochs.csv')
 
