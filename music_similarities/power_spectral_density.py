@@ -4,9 +4,6 @@ Created on Sat Aug 25 14:50:05 2018
 @author: Malte Gueth
 """
 
-import numpy as np
-import matplotlib.pyplot as plt
-
 import mne
 from mne.time_frequency import psd_multitaper
 
