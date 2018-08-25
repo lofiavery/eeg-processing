@@ -19,6 +19,9 @@ clf = make_pipeline(StandardScaler(),
 # Load cleaned raw data and start epoching them as required
 path = './rawdata/'  
 for file in glob.glob(os.path.join(path, '*ICA-raw.fif')):
+
+    filepath, filename = os.path.split(file)
+    filename, ext = os.path.splitext(filename)
     
     raw = mne.io.read_raw_fif(file, preload=True) 
     picks = mne.pick_types(raw.info, eeg=True)
@@ -85,7 +88,10 @@ for file in glob.glob(os.path.join(path, '*ICA-raw.fif')):
     epochs = mne.Epochs(raw, events=events, event_id=event_id, tmin=-0.5, tmax=6,
                         baseline=(-0.5, 0), picks=picks, preload=True)        
     epochs.resample(256) 
-                    
+    
+    # Save the epochs with re-assigned trigger codes
+    epochs.save('./epochs/' + filename[:-8] + '-reordered-epo.fif')
+
     # Crop the epochs to time windows you want to analyze separately
     X = epochs.copy().crop(0, 0.5).get_data().mean(axis=2)
     #X = epochs.copy().crop(2, 2.5).get_data().mean(axis=2)
